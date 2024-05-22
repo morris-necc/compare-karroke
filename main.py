@@ -11,7 +11,7 @@ load_dotenv() #loads your .env file
 client_id = os.getenv("CLIENT_ID")
 client_secret = os.getenv("CLIENT_SECRET")
 
-oauth = SpotifyOAuth(
+oauth = SpotifyOAuth.SpotifyOAuth(
     client_id = os.getenv("CLIENT_ID"),
     client_secret = os.getenv("CLIENT_SECRET"),
     redirect_uri = "localhost:8080/callback",
