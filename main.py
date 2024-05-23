@@ -1,54 +1,39 @@
-from dotenv import load_dotenv
-import os
-import base64
-from requests import post, get
-import json
-import SpotifyOAuth
+from flask import Flask, request, url_for, session, redirect
+import spotipy
+from spotipy.oauth2 import SpotifyOAuth
 
-load_dotenv() #loads your .env file
+app = Flask(__name__)
 
+app.secret_key = "038nsu3sYn82y"
+app.config['SESSION_COOKIE_NAME'] = "Test Cookie"
 
-client_id = os.getenv("CLIENT_ID")
-client_secret = os.getenv("CLIENT_SECRET")
+@app.route('/')
+def login():
+    #Logs you into spotify
+    #Home page for now, but change later
+    sp_oauth = create_spotify_oauth()
+    auth_url = sp_oauth.get_authorize_url()
+    return redirect(auth_url)
 
-oauth = SpotifyOAuth.SpotifyOAuth(
-    client_id = os.getenv("CLIENT_ID"),
-    client_secret = os.getenv("CLIENT_SECRET"),
-    redirect_uri = "localhost:8080/callback",
-    scope = "user-library-ready"
-)
+@app.route('/authorize')
+def authorize():
+    #After the user logs in, they get redirected here
+    return "authorized"
 
+@app.route('/getTracks')
+def getTracks():
+    #placeholder
+    return "Tracks"
 
-def get_token():
-    auth_string = client_id + ":" + client_secret
-    auth_bytes = auth_string.encode("utf-8")
-    auth_base64 = str(base64.b64encode(auth_bytes), "utf-8")
+def create_spotify_oauth():
+    #Creates a SpotifyOAuth object
+    return SpotifyOAuth(
+        client_id = "77771486cf5e471fb94e32197e9035e9",
+        client_secret = "0009c35f5bd248e1a4234a1f2a765b1c",
+        redirect_uri = url_for("authorize", _external=True),
+        scope = "user-library-read"
+    )
 
-    url = "https://accounts.spotify.com/api/token"
-    headers = {
-        "Authorization": "Basic " + auth_base64,
-        "Content-Type": "application/x-www-form-urlenconded"
-    }
-    data = {"grant_type" : "client_credentials"}
-    result = post(url, headers = headers, data = data, json=True)
-    print(result.content)
-    json_result = json.loads(result.content)
-    token = json_result["access_token"]
-    return token
-
-def get_auth_header(token):
-    return {"Authorization": "Bearer " + token}
-
-def search_for_artist(token, artist_name):
-    url = "https://api.spotify.com/v1/search"
-    headers = get_auth_header(token)
-    query = f"?q={artist_name}&type=artist&limit=1"
-
-    query_url = url + query
-    result = get(query_url, headers = headers)
-    json_result = json.loads(result.content)
-    print(json_result)
-
-token = get_token()
-print(token)
-#search_for_artist(token, "ACDC")
+#start
+if __name__ == '__main__':  
+    app.run()
