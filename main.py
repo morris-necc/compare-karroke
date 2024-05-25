@@ -1,24 +1,37 @@
-from flask import Flask, request, url_for, session, redirect
+from flask import Flask, request, url_for, session, redirect, render_template
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 import time
 
+# initialize
 app = Flask(__name__)
-
 app.secret_key = "038nsu3sYn82y"
 app.config['SESSION_COOKIE_NAME'] = "Test Cookie"
 
 @app.route('/')
-def login():
+@app.route('/index')
+def index():
+    return render_template('index.html')
+
+@app.route("/connect")
+def connect():
     #Logs you into spotify
     #Home page for now, but change later
     sp_oauth = create_spotify_oauth()
     auth_url = sp_oauth.get_authorize_url()
     return redirect(auth_url)
 
+@app.route('/create')
+def create():
+    pass
+
+@app.route('/join')
+def join():
+    pass
+
 @app.route('/authorize')
 def authorize():
-    #After the user logs in, they get redirected here
+    #After the user logqs in, they get redirected here
     sp_oauth = create_spotify_oauth()
     session.clear()
 
@@ -27,7 +40,11 @@ def authorize():
     token_info = sp_oauth.get_access_token(code)
     session["token_info"] = token_info #saves the token info in the session
 
-    return redirect(url_for('getTracks', _external=True))
+    return redirect(url_for('menu', _external=True))
+
+@app.route('/menu')
+def menu():
+    return render_template('menu.html')
 
 @app.route('/getTracks')
 def getTracks():
@@ -37,7 +54,12 @@ def getTracks():
         print("User not logged in")
         return redirect(url_for("login", _external=True))
     sp = spotipy.Spotify(auth=token_info["access_token"])
-    return sp.current_user_top_artists(limit=50, offset=0)['items']
+
+    #to be done later
+    items = {"Artist": sp.current_user_top_tracks(limit=50, offset=0)['items'][0]['artists']['name']}
+
+
+    return sp.current_user_top_tracks(limit=50, offset=0)['items']
 
 def create_spotify_oauth():
     #Creates a SpotifyOAuth object
@@ -62,6 +84,10 @@ def get_token():
         sp_oauth = create_spotify_oauth()
         token_info = sp_oauth.refresh_access_token(token_info["refresh_token"])
     return token_info
+
+def list_data():
+    pass
+
 
 #start
 if __name__ == '__main__':  

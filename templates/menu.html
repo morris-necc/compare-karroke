@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>PLACEHOLDER_APPNAME</title>
+        <link href="{{ url_for('static', filename='styles/style.css') }}" rel="stylesheet"/>
+    </head>
+    <body>
+        <h1>Create a room</h1>
+        <form action="/getTracks">
+            <button type="submit">Create A Room</button>
+        </form>
+
+        <h1>Join a room</h1>
+        <form action="/join">
+            <input type="text" name="join" id="join" placeholder="Enter Room Code..." />
+            <button type="submit">Join A Room</button>
+        </form>
+    </body>
+</html>
