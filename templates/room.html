@@ -1,0 +1,70 @@
+{% extends 'base.html' %} {% block content %}
+
+<h2 class="room_code">ROOM CODE: {{code}}</h2>
+<h2 class="section_headers"> Members in this room </h2>
+<div id="member_list"></div>
+<h2 class="section_headers"> Everyone's top songs </h2>
+<div id="top_songs"></div>
+
+{% if members > 1 %}
+<div>
+    <ul class="list">
+        <li> Invite more members into the room to compare </li>
+    </ul>
+</div>
+{% else %}
+<h3> Invite more members into the room to compare</h3>
+{% endif %}
+
+<script type="text/javascript">
+    var socketio = io();
+    var users = [];
+    
+    socketio.on("message", (data) => {
+        newUser(data);
+    });
+
+    function newUser(data) {
+        console.log(data);
+        let duplicate = false;
+        for (user in users) {
+            console.log(user.name);
+            if (data.name == user.name) {
+                duplicate = true;
+                break;
+            }
+        }
+
+        if (!duplicate){
+            users.push({name: data.name, items: data.items});
+        }
+
+        refresh();
+    }
+
+    const refresh = () => {
+        document.getElementById("member_list").innerHTML = "";
+        for (let user in users) {
+            console.log(users[user].items);
+            document.getElementById("member_list").innerHTML += `
+                <input type="checkbox" class="user_list" id=${users[user].name} value=${users[user].name}>
+                <label for="${users[user].name}"> ${users[user].name} </label>`;
+
+            document.getElementById("top_songs").innerHTML += `
+                <div id=${users[user].name + "_section"}>
+                    <b> ${users[user].name} </b>
+                    <ul id=${users[user].name + "_toptracks"}>
+                        
+                    </ul>
+                </div>
+            `;
+            
+            for (var i = 0; i < 150; i+=3){
+                document.getElementById(users[user].name + "_toptracks").innerHTML += `
+                    <li> <h5> <img class="images" src="${users[user].items[i]}">  ${users[user].items[i + 1]} - ${users[user].items[i + 2]} </h5> </li>
+                `;
+            }
+        }
+    }
+</script>
+{% endblock %}

@@ -20,4 +20,49 @@ input, button {
     font-size: 2rem;
     padding: 1rem;
     border-radius: 10px;
+    justify-content: center;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.connect {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    row-gap: 20px;
+}
+
+.create_div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    row-gap: 20px;
+}
+
+.join {
+    align-items: center;
+    justify-content: center;
+    row-gap: 20px;
+}
+
+.center_text .room_code .user_list .section_headers{
+    padding-top: 50px;
+    padding-bottom: 20px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+
+.top_songs {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }

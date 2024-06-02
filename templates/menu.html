@@ -1,20 +1,22 @@
-<!DOCTYPE html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>PLACEHOLDER_APPNAME</title>
-        <link href="{{ url_for('static', filename='styles/style.css') }}" rel="stylesheet"/>
-    </head>
-    <body>
-        <h1>Create a room</h1>
-        <form action="/getTracks">
-            <button type="submit">Create A Room</button>
-        </form>
+{% extends 'base.html' %} {% block content %}
+<div class="create_div">
+    <h1>Create a room</h1>
+    <form method="post">
+        <button type="submit", name="create">Create A Room</button>
+    </form>
+</div>
+<div class="join">
+    <h1 class="center_text">Join a room</h1>
+    <form method="post">
+        <input type="text" name="join_code" placeholder="Enter Room Code..." value="{{join_code}}"  />
+        <button type="submit", name="join_btn">Join A Room</button>
+    </form>
+    
+    {% if error %}
+    <ul>
+        <li>{{error}}</li>
+    </ul>
+    {% endif %}
 
-        <h1>Join a room</h1>
-        <form action="/join">
-            <input type="text" name="join" id="join" placeholder="Enter Room Code..." />
-            <button type="submit">Join A Room</button>
-        </form>
-    </body>
-</html>
+</div>
+{% endblock %}
