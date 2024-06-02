@@ -16,6 +16,10 @@ body {
     font-size: 2rem;
 }
 
+p {
+    font-size: 16px;
+}
+
 input, button {
     font-size: 2rem;
     padding: 1rem;
@@ -52,9 +56,19 @@ input, button {
     row-gap: 20px;
 }
 
-.center_text .room_code .user_list .section_headers{
+.center_text {
     padding-top: 50px;
     padding-bottom: 20px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+
+.room_code .section_headers{
+    display: flex;
+    flex-direction: row;
+    padding-top: 50px;
+    margin-bottom: 30px;
     text-align: center;
     align-items: center;
     justify-content: center;

@@ -9,7 +9,7 @@
 {% if members > 1 %}
 <div>
     <ul class="list">
-        <li> Invite more members into the room to compare </li>
+        <li> Placeholder </li>
     </ul>
 </div>
 {% else %}
@@ -61,7 +61,7 @@
             
             for (var i = 0; i < 150; i+=3){
                 document.getElementById(users[user].name + "_toptracks").innerHTML += `
-                    <li> <h5> <img class="images" src="${users[user].items[i]}">  ${users[user].items[i + 1]} - ${users[user].items[i + 2]} </h5> </li>
+                    <li> <p> <img class="images" width=32 height=32 src="${users[user].items[i]}">  ${users[user].items[i + 1]} - ${users[user].items[i + 2]} </p> </li>
                 `;
             }
         }
