@@ -1,8 +1,32 @@
 {% extends 'base.html' %} {% block content %}
 <div class="connect">
     <h1>Compare Your Music Taste With Your Friends</h1>
-    <form action="/connect">
-        <button type="submit">Connect to Spotify</button>
+    {% if flag == 0 %}
+    <form>
+        <button type="submit"><a href="{{auth_url}}">Sign in</button>
     </form>
+    {% else %}
+    <div class="create_div">
+        <h1>Create a room</h1>
+        <form method="post">
+            <button type="submit", name="create">Create A Room</button>
+        </form>
+    </div>
+    <div class="join_div">
+        <h1 class="center_text">Join a room</h1>
+        <form method="post">
+            <input type="text" name="join_code" placeholder="Enter Room Code..." value="{{join_code}}"  />
+            <button type="submit", name="join_btn">Join A Room</button>
+        </form>
+        
+        {% if error %}
+        <ul>
+            <li>{{error}}</li>
+        </ul>
+        {% endif %}
+
+    </div>
+    {% endif %}
+
 </div>
 {% endblock %}

@@ -19,17 +19,20 @@
 <script type="text/javascript">
     var socketio = io();
     var users = [];
+
+    // store the songs here
+    var tracks = [];
+    var tracks_visible = [];
     
     socketio.on("message", (data) => {
         newUser(data);
     });
 
     function newUser(data) {
-        console.log(data);
         let duplicate = false;
-        for (user in users) {
-            console.log(user.name);
-            if (data.name == user.name) {
+        for (let user in users) {
+            if (data.name == users[user].name) {
+                console.log("DUPLICATE")
                 duplicate = true;
                 break;
             }
@@ -39,13 +42,15 @@
             users.push({name: data.name, items: data.items});
         }
 
+        console.log(users);
+
         refresh();
     }
 
     const refresh = () => {
         document.getElementById("member_list").innerHTML = "";
+        document.getElementById("top_songs").innerHTML = "";
         for (let user in users) {
-            console.log(users[user].items);
             document.getElementById("member_list").innerHTML += `
                 <input type="checkbox" class="user_list" id=${users[user].name} value=${users[user].name}>
                 <label for="${users[user].name}"> ${users[user].name} </label>`;
@@ -54,11 +59,9 @@
                 <div id=${users[user].name + "_section"}>
                     <b> ${users[user].name} </b>
                     <ul id=${users[user].name + "_toptracks"}>
-                        
                     </ul>
                 </div>
             `;
-            
             for (var i = 0; i < 150; i+=3){
                 document.getElementById(users[user].name + "_toptracks").innerHTML += `
                     <li> <p> <img class="images" width=32 height=32 src="${users[user].items[i]}">  ${users[user].items[i + 1]} - ${users[user].items[i + 2]} </p> </li>
@@ -66,5 +69,7 @@
             }
         }
     }
+
+
 </script>
 {% endblock %}
