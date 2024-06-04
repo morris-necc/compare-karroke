@@ -2,74 +2,84 @@
 
 <h2 class="room_code">ROOM CODE: {{code}}</h2>
 <h2 class="section_headers"> Members in this room </h2>
+<form >
 <div id="member_list"></div>
 <h2 class="section_headers"> Everyone's top songs </h2>
 <div id="top_songs"></div>
 
-{% if members > 1 %}
-<div>
-    <ul class="list">
-        <li> Placeholder </li>
-    </ul>
-</div>
-{% else %}
+{% if members == 1 %}
 <h3> Invite more members into the room to compare</h3>
 {% endif %}
 
 <script type="text/javascript">
     var socketio = io();
-    var users = [];
 
-    // store the songs here
-    var tracks = [];
-    var tracks_visible = [];
-    
-    socketio.on("message", (data) => {
-        newUser(data);
-    });
+    // socketio.on("message", (data) => {
+    //     //maybe send current users 
+    //     newUser(data);
+    // });
 
-    function newUser(data) {
-        let duplicate = false;
-        for (let user in users) {
-            if (data.name == users[user].name) {
-                console.log("DUPLICATE")
-                duplicate = true;
-                break;
-            }
-        }
+    // function newUser(data) {
+    //     let duplicate = false;
+    //     for (let user in users) {
+    //         if (data.name == users[user].name) {
+    //             console.log("DUPLICATE")
+    //             duplicate = true;
+    //             break;
+    //         }
+    //     }
 
-        if (!duplicate){
-            users.push({name: data.name, items: data.items});
-        }
+    //     if (!duplicate){
+    //         users.push({name: data.name, items: data.items});
+    //     }
 
-        console.log(users);
+    //     console.log(users);
 
-        refresh();
+    //     refresh();
+    // }
+
+    const listMembers = (user) => {
+        document.getElementById("member_list").innerHTML += `
+                <input type="checkbox" class="user_list" id=${user} value=${user}>
+                <label for="${user}"> ${user} </label>`;;
     }
 
-    const refresh = () => {
-        document.getElementById("member_list").innerHTML = "";
-        document.getElementById("top_songs").innerHTML = "";
-        for (let user in users) {
-            document.getElementById("member_list").innerHTML += `
-                <input type="checkbox" class="user_list" id=${users[user].name} value=${users[user].name}>
-                <label for="${users[user].name}"> ${users[user].name} </label>`;
+    const listSong = (user, trackImg, trackName, trackArtist) => {
+        document.getElementById(user + "_toptracks").innerHTML += `
+            <li> <p> <img class="images" width=32 height=32 src="${trackImg}">  ${trackName} - ${trackArtist} </p> </li>
+        `;
+    }
 
-            document.getElementById("top_songs").innerHTML += `
-                <div id=${users[user].name + "_section"}>
-                    <b> ${users[user].name} </b>
-                    <ul id=${users[user].name + "_toptracks"}>
+    //onclick function to send a request for songs (checkmark)
+    const songRequest = () => {
+        socketio.emit("requestSongs", user) //username here somehow
+    };
+
+    const clearList = () => {
+        document.getElementById(user + "_toptracks").innerHTML += ""; //again, get username somehow
+    };
+
+    socketio.on("requestSongs", (user, data) => {
+        //retrieves all songs and put them in
+        for (var i = 0; i < 150; i+=3) {
+            listSong(user, data[i], data[i+1], data[i+2]);
+        }
+    });
+
+</script>
+
+{% for data in content %}
+<script type="text/javascript">
+    listMembers("{{data.user}}");
+
+    document.getElementById("top_songs").innerHTML += `
+                <div id="{{data.user}}_section"}>
+                    <b> {{data.user}} </b>
+                    <ul id= "{{data.user}}_toptracks"}>
                     </ul>
                 </div>
             `;
-            for (var i = 0; i < 150; i+=3){
-                document.getElementById(users[user].name + "_toptracks").innerHTML += `
-                    <li> <p> <img class="images" width=32 height=32 src="${users[user].items[i]}">  ${users[user].items[i + 1]} - ${users[user].items[i + 2]} </p> </li>
-                `;
-            }
-        }
-    }
-
-
 </script>
+{% endfor %}
+
 {% endblock %}

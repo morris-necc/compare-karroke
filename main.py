@@ -75,15 +75,12 @@ def index():
         room = join_code
         if create != False:
             room = generate_unique_code(4)
-            print(f"code: {room}")
-            rooms[room] = {"members": 0, "tracks": []}
+            rooms[room] = {"members": 0, "content" : []}
         elif join_code not in rooms:
             return render_template('index.html', error="Room does not exist", join_code=join_code)
 
         session["room"] = room
         session["name"] = sp.me()["display_name"]
-
-        print(session.get("name"))
 
         return redirect(url_for("room"))
 
@@ -105,12 +102,14 @@ def index():
 def room():
     cache_handler = spotipy.cache_handler.FlaskSessionCacheHandler(session)
     auth_manager = spotipy.oauth2.SpotifyOAuth(cache_handler=cache_handler)
+    auth_url = auth_manager.get_authorize_url()
+
     if not auth_manager.validate_token(cache_handler.get_cached_token()):
-        return redirect('/')
+        return render_template('index.html', auth_url=auth_url, flag=0)
     
     room = session.get("room")
     if room is None or session.get("name") is None or room not in rooms:
-        return redirect(url_for("/"))
+        return render_template('index.html', flag=1)
     
     sp = spotipy.Spotify(auth_manager=auth_manager)
 
@@ -121,7 +120,11 @@ def room():
 
     session["items"] = items
 
-    return render_template('room.html', code=room, members=rooms[room]["members"])
+    if {"user":session.get("name"), "tracks":items} not in rooms[room]["content"]:
+        rooms[room]["content"].append({"user":session.get("name"), "tracks":items})
+
+    print(rooms[room]["content"])
+    return render_template('room.html', code=room, members=rooms[room]["members"], content=rooms[room]["content"])
 
 @socketio.on("connect")
 def on_connect(auth):
@@ -139,6 +142,16 @@ def on_connect(auth):
     data = {"name": name, "items": items}
     send(data, to=room)
     rooms[room]["members"] += 1
+
+@socketio.on("requestSongs")
+def requestSongs(user):
+    room = session.get("room")
+    if room not in rooms:
+        return
+    
+    for data in rooms[room]["content"]:
+        if user == data["name"]:
+            send((user, data["tracks"]), to=room)
 
 @socketio.on("disconnect")
 def on_disconnect():
