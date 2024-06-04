@@ -2,7 +2,6 @@
 
 <h2 class="room_code">ROOM CODE: {{code}}</h2>
 <h2 class="section_headers"> Members in this room </h2>
-<form >
 <div id="member_list"></div>
 <h2 class="section_headers"> Everyone's top songs </h2>
 <div id="top_songs"></div>
@@ -38,29 +37,66 @@
     //     refresh();
     // }
 
+
     const listMembers = (user) => {
         document.getElementById("member_list").innerHTML += `
                 <input type="checkbox" class="user_list" id=${user} value=${user}>
-                <label for="${user}"> ${user} </label>`;;
-    }
+                <label for="${user}"> ${user} </label>`;
+        
+        // let userCheckbox = document.getElementById(user);
+        // userCheckbox.addEventListener('change', () => {
+        //     clearList(user);
+        //     if (userCheckbox.checked) {
+        //         console.log(user)
+        //         document.getElementById(user + "_header").innerHTML = user;
+        //         songRequest(user);
+        //     }
+        // })
+
+        updateListeners();
+    };
+
+    const updateListeners = () => {
+        var checkboxes = document.getElementsByClassName("user_list");
+        for (let i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].addEventListener('change', () => {
+                if (checkboxes[i].checked) {
+                    songRequest(checkboxes[i].id);
+                } else {
+                    clearRequest(checkboxes[i].id);
+                }
+            });
+        }
+    };
 
     const listSong = (user, trackImg, trackName, trackArtist) => {
         document.getElementById(user + "_toptracks").innerHTML += `
             <li> <p> <img class="images" width=32 height=32 src="${trackImg}">  ${trackName} - ${trackArtist} </p> </li>
         `;
-    }
+    };
 
     //onclick function to send a request for songs (checkmark)
-    const songRequest = () => {
+    const songRequest = (user) => {
         socketio.emit("requestSongs", user) //username here somehow
     };
 
-    const clearList = () => {
-        document.getElementById(user + "_toptracks").innerHTML += ""; //again, get username somehow
+    const clearRequest = (user) => {
+        socketio.emit("requestClear", user)
     };
 
-    socketio.on("requestSongs", (user, data) => {
+    // const clearList = (user) => {
+    //     document.getElementById(user + "_header").innerHTML = "";
+    //     document.getElementById(user + "_toptracks").innerHTML = ""; 
+    // };
+
+    socketio.on("sendClear", (user) => {
+        document.getElementById(user + "_header").innerHTML = "";
+        document.getElementById(user + "_toptracks").innerHTML = ""; 
+    });
+
+    socketio.on("sendSongs", (user, data) => {
         //retrieves all songs and put them in
+        document.getElementById(user + "_header").innerHTML = user;
         for (var i = 0; i < 150; i+=3) {
             listSong(user, data[i], data[i+1], data[i+2]);
         }
@@ -71,14 +107,13 @@
 {% for data in content %}
 <script type="text/javascript">
     listMembers("{{data.user}}");
-
     document.getElementById("top_songs").innerHTML += `
-                <div id="{{data.user}}_section"}>
-                    <b> {{data.user}} </b>
-                    <ul id= "{{data.user}}_toptracks"}>
-                    </ul>
-                </div>
-            `;
+                            <div id="{{data.user}}_section"}>
+                                <b id="{{data.user}}_header"> </b>
+                                <ul id= "{{data.user}}_toptracks"}>
+                                </ul>
+                            </div>
+                        `;
 </script>
 {% endfor %}
 

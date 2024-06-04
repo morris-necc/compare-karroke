@@ -1,5 +1,5 @@
 from flask import Flask, request, url_for, session, redirect, render_template
-from flask_socketio import join_room, leave_room, send, SocketIO
+from flask_socketio import join_room, leave_room, send, SocketIO, emit
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 import time
@@ -123,7 +123,6 @@ def room():
     if {"user":session.get("name"), "tracks":items} not in rooms[room]["content"]:
         rooms[room]["content"].append({"user":session.get("name"), "tracks":items})
 
-    print(rooms[room]["content"])
     return render_template('room.html', code=room, members=rooms[room]["members"], content=rooms[room]["content"])
 
 @socketio.on("connect")
@@ -150,8 +149,19 @@ def requestSongs(user):
         return
     
     for data in rooms[room]["content"]:
-        if user == data["name"]:
-            send((user, data["tracks"]), to=room)
+        if user == data["user"]:
+            emit("sendSongs", (user, data["tracks"]), to=room)
+
+@socketio.on("requestClear")
+def requestClear(user):
+    room = session.get("room")
+    if room not in rooms:
+        return
+    
+    for data in rooms[room]["content"]:
+        if user == data["user"]:
+            emit("sendClear", user, to=room)
+
 
 @socketio.on("disconnect")
 def on_disconnect():
