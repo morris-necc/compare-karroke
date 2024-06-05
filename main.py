@@ -70,14 +70,14 @@ def index():
         create = request.form.get("create", False)
 
         if join_btn != False and not join_code:
-            return render_template('index.html', error="Please enter a room code")
+            return redirect(url_for('index', error="Please enter a room code"))
 
         room = join_code
         if create != False:
             room = generate_unique_code(4)
             rooms[room] = {"members": 0, "content" : []}
         elif join_code not in rooms:
-            return render_template('index.html', error="Room does not exist", join_code=join_code)
+            return redirect(url_for('index', error="Room does not exist", join_code=join_code))
 
         session["room"] = room
         session["name"] = sp.me()["display_name"]
@@ -87,16 +87,15 @@ def index():
     if request.args.get("code"):
         # Step 2. Being redirected from Spotify auth page
         auth_manager.get_access_token(request.args.get("code"))
-        return render_template('index.html', flag=1)
+        return redirect(url_for('index', flag=1))
 
     if not auth_manager.validate_token(cache_handler.get_cached_token()):
         # Step 1. Display sign in link when no token
         auth_url = auth_manager.get_authorize_url()
-        return render_template('index.html', auth_url=auth_url, flag=0)
+        return redirect(url_for('index', auth_url=auth_url, flag=0))
 
-    # Step 3. Signed in, display data
-           
-    return render_template('index.html')
+    # Backup
+    return redirect(url_for('index', flag=1))
     
 @app.route('/room')
 def room():
@@ -105,11 +104,11 @@ def room():
     auth_url = auth_manager.get_authorize_url()
 
     if not auth_manager.validate_token(cache_handler.get_cached_token()):
-        return render_template('index.html', auth_url=auth_url, flag=0)
+        return redirect(url_for('index', auth_url=auth_url, flag=0))
     
     room = session.get("room")
     if room is None or session.get("name") is None or room not in rooms:
-        return render_template('index.html', flag=1)
+        return redirect(url_for('index',  flag=1))
     
     sp = spotipy.Spotify(auth_manager=auth_manager)
 
@@ -125,7 +124,7 @@ def room():
         # appends user's tracks into the room's content if they're not already in there
         rooms[room]["content"].append({"user":session.get("name"), "tracks":items})
 
-    return render_template('room.html', code=room, content=rooms[room]["content"])
+    return redirect(url_for('room', code=room, content=rooms[room]["content"]))
 
 @socketio.on("connect")
 def on_connect(auth):
