@@ -36,7 +36,7 @@ import os
 app = Flask(__name__)
 os.environ["SPOTIPY_CLIENT_ID"] = "77771486cf5e471fb94e32197e9035e9"
 os.environ["SPOTIPY_CLIENT_SECRET"] = "0009c35f5bd248e1a4234a1f2a765b1c"
-os.environ["SPOTIPY_REDIRECT_URI"] = 'https://neccpain.pythonanywhere.com/'
+os.environ["SPOTIPY_REDIRECT_URI"] = 'https://compare-karroke.onrender.com/'
 app.config['SECRET_KEY'] = os.urandom(64)
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_FILE_DIR'] = './.flask_session/'
