@@ -114,16 +114,18 @@ def room():
     sp = spotipy.Spotify(auth_manager=auth_manager)
 
     items = []
-    for i in range(0, 3):
+    for i in range(0, 5):
         for item in sp.current_user_top_tracks(limit=50, offset=i*50)['items']:
-            items += [item['album']['images'][2]['url'], item['name'], item['artists'][0]['name']]
+            # appends the album cover, track title, artist, and song id
+            items += [item['album']['images'][2]['url'], item['name'], item['artists'][0]['name'], item['id']]
 
     session["items"] = items
 
     if {"user":session.get("name"), "tracks":items} not in rooms[room]["content"]:
+        # appends user's tracks into the room's content if they're not already in there
         rooms[room]["content"].append({"user":session.get("name"), "tracks":items})
 
-    return render_template('room.html', code=room, members=rooms[room]["members"], content=rooms[room]["content"])
+    return render_template('room.html', code=room, content=rooms[room]["content"])
 
 @socketio.on("connect")
 def on_connect(auth):

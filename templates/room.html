@@ -5,10 +5,10 @@
 <div id="member_list"></div>
 <h2 class="section_headers"> Everyone's top songs </h2>
 <div id="top_songs"></div>
-
-{% if members == 1 %}
-<h3> Invite more members into the room to compare</h3>
-{% endif %}
+<div id="comparison_list">
+    <h3>Songs selected users have in common</h3>
+    <ul id="comparison"> </ul>
+</div>
 
 <script type="text/javascript">
     var socketio = io();
@@ -37,21 +37,14 @@
     //     refresh();
     // }
 
+    // universal
+    // var checkedUsers = [];
+    var songList = {}; //user : songs
 
     const listMembers = (user) => {
         document.getElementById("member_list").innerHTML += `
                 <input type="checkbox" class="user_list" id=${user} value=${user}>
                 <label for="${user}"> ${user} </label>`;
-        
-        // let userCheckbox = document.getElementById(user);
-        // userCheckbox.addEventListener('change', () => {
-        //     clearList(user);
-        //     if (userCheckbox.checked) {
-        //         console.log(user)
-        //         document.getElementById(user + "_header").innerHTML = user;
-        //         songRequest(user);
-        //     }
-        // })
 
         updateListeners();
     };
@@ -61,8 +54,17 @@
         for (let i = 0; i < checkboxes.length; i++) {
             checkboxes[i].addEventListener('change', () => {
                 if (checkboxes[i].checked) {
+                    // if (!(checkboxes[i].id in checkedUsers)){
+                    //     checkedUsers.push(checkboxes[i].id);
+                    // }
                     songRequest(checkboxes[i].id);
                 } else {
+                    // if (checkboxes[i].id in checkedUsers){
+                    //     checkedUsers = checkedUsers.filter((val)=>{
+                    //         return val != checkboxes[i].id;
+                    //     })
+                    //     clearRequest(checkboxes[i].id);
+                    // }
                     clearRequest(checkboxes[i].id);
                 }
             });
@@ -75,32 +77,74 @@
         `;
     };
 
+    const listCommon = (trackImg, trackName, trackArtist) => {
+        document.getElementById("comparison").innerHTML += `
+            <li> <p> <img class="images" width=32 height=32 src="${trackImg}">  ${trackName} - ${trackArtist} </p> </li>
+        `;
+    }
+
     //onclick function to send a request for songs (checkmark)
     const songRequest = (user) => {
-        socketio.emit("requestSongs", user) //username here somehow
+        socketio.emit("requestSongs", user)
     };
 
     const clearRequest = (user) => {
         socketio.emit("requestClear", user)
     };
 
-    // const clearList = (user) => {
-    //     document.getElementById(user + "_header").innerHTML = "";
-    //     document.getElementById(user + "_toptracks").innerHTML = ""; 
-    // };
+    const compareSongs = () => {
+        // disgusting brute force comparison
+        users = Object.keys(songList);
+        let firstFound = true;
+        let commonSongs = [];
+        for (user in users) {
+            if (songList[users[user]].length && firstFound) {
+                commonSongs = songList[users[user]];
+                firstFound = false;
+            } else {
+                let tempSongs = songList[users[user]];
+                let tempCommon = [];
+                for (let i = 3; i < tempSongs.length; i+=4) {
+                    if (commonSongs[i] == tempSongs[i]){
+                        tempCommon.push(tempSongs[i-3], tempSongs[i-2], tempSongs[i-1], tempSongs[i])
+                    }
+                }
+                commonSongs = tempCommon;
+            }
+        }
+        return commonSongs; //returns an array of songs
+    }
+
 
     socketio.on("sendClear", (user) => {
         document.getElementById(user + "_header").innerHTML = "";
         document.getElementById(user + "_toptracks").innerHTML = ""; 
+        songList[user] = [];
+
+        updateCommon();
     });
 
     socketio.on("sendSongs", (user, data) => {
         //retrieves all songs and put them in
+        songList[user] = data;
+
         document.getElementById(user + "_header").innerHTML = user;
-        for (var i = 0; i < 150; i+=3) {
+        for (var i = 0; i < 200; i+=4) { 
             listSong(user, data[i], data[i+1], data[i+2]);
         }
+
+        updateCommon();
+
     });
+
+    const updateCommon = () => {
+        document.getElementById("comparison").innerHTML = "";
+        let commonSongs = compareSongs();
+        let loops = (commonSongs.length > 200)? 200: commonSongs.length;
+        for (var i = 0; i < loops; i+=4) { 
+            listCommon(commonSongs[i], commonSongs[i+1], commonSongs[i+2]);
+        }
+    }
 
 </script>
 
