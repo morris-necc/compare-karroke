@@ -7,6 +7,7 @@ import random
 from string import ascii_uppercase
 from flask_session import Session
 import os
+import uuid
 
 # Notes
 # You can pass variables into the html code like below:
@@ -36,8 +37,8 @@ import os
 app = Flask(__name__)
 os.environ["SPOTIPY_CLIENT_ID"] = "77771486cf5e471fb94e32197e9035e9"
 os.environ["SPOTIPY_CLIENT_SECRET"] = "0009c35f5bd248e1a4234a1f2a765b1c"
-os.environ["SPOTIPY_REDIRECT_URI"] = 'https://compare-karroke.onrender.com/'
-# os.environ["SPOTIPY_REDIRECT_URI"] = 'https://localhost:5000/'
+# os.environ["SPOTIPY_REDIRECT_URI"] = 'https://compare-karroke.onrender.com/'
+os.environ["SPOTIPY_REDIRECT_URI"] = 'http://localhost:5000/'
 app.config['SECRET_KEY'] = os.urandom(64)
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_FILE_DIR'] = './.flask_session/'
@@ -106,11 +107,11 @@ def room():
     auth_url = auth_manager.get_authorize_url()
 
     if not auth_manager.validate_token(cache_handler.get_cached_token()):
-        return redirect(url_for('index.html', auth_url=auth_url, flag=0))
+        return redirect(url_for('index', auth_url=auth_url, flag=0))
     
     room = session.get("room")
     if room is None or session.get("name") is None or room not in rooms:
-        return redirect(url_for('index.html', flag=1))
+        return redirect(url_for('index', flag=1))
     
     sp = spotipy.Spotify(auth_manager=auth_manager)
 
@@ -153,7 +154,7 @@ def requestSongs(user):
     
     for data in rooms[room]["content"]:
         if user == data["user"]:
-            emit("sendSongs", (user, data["tracks"]), to=room)
+            emit("sendSongs", (user, data["tracks"]), to=request.sid)
 
 @socketio.on("requestClear")
 def requestClear(user):
@@ -163,7 +164,7 @@ def requestClear(user):
     
     for data in rooms[room]["content"]:
         if user == data["user"]:
-            emit("sendClear", user, to=room)
+            emit("sendClear", user, to=request.sid)
 
 
 @socketio.on("disconnect")
