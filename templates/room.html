@@ -13,8 +13,7 @@
 <script type="text/javascript">
     // var socketio = io();
     var socketio = io('https://compare-karroke.onrender.com', {
-        transports: ['websocket', 'polling'],
-        timeout: 20000
+        transports: ['websocket', 'polling']
     });
     var songList = {}; //user : songs
 
@@ -133,7 +132,7 @@
 
     setInterval(function() {
         socket.emit('ping'); // send a keep-alive ping to the server
-    }, 25000); // every 25 seconds
+    }, 15000); // every 25 seconds
 
 </script>
 
