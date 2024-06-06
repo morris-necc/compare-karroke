@@ -5,6 +5,7 @@ import random
 from string import ascii_uppercase
 from flask_session import Session
 import os
+import threading
 
 # Notes
 # The only problem now is that it looks ugly
@@ -134,6 +135,7 @@ def requestSongs(user):
     room = session.get("room")
     if room not in rooms:
         print("room somehow not in rooms")
+        print("session[room] :", room, "| rooms :", rooms)
         return
     
     for data in rooms[room]["content"]:
