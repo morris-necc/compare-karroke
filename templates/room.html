@@ -12,33 +12,6 @@
 
 <script type="text/javascript">
     var socketio = io();
-
-    // socketio.on("message", (data) => {
-    //     //maybe send current users 
-    //     newUser(data);
-    // });
-
-    // function newUser(data) {
-    //     let duplicate = false;
-    //     for (let user in users) {
-    //         if (data.name == users[user].name) {
-    //             console.log("DUPLICATE")
-    //             duplicate = true;
-    //             break;
-    //         }
-    //     }
-
-    //     if (!duplicate){
-    //         users.push({name: data.name, items: data.items});
-    //     }
-
-    //     console.log(users);
-
-    //     refresh();
-    // }
-
-    // universal
-    // var checkedUsers = [];
     var songList = {}; //user : songs
 
     const listMembers = (user) => {
