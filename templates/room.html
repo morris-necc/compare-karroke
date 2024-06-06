@@ -11,7 +11,10 @@
 </div>
 
 <script type="text/javascript">
-    var socketio = io();
+    // var socketio = io();
+    var socketio = io('https://compare-karroke.onrender.com', {
+        transports: ['websocket', 'polling']
+    });
     var songList = {}; //user : songs
 
     const listMembers = (user) => {

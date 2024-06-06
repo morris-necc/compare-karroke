@@ -122,7 +122,6 @@ def on_connect(auth):
     join_room(room)
     data = {"name": name, "items": items}
     send(data, to=room)
-    print("data sent: ", data)
     rooms[room]["members"] += 1
 
 @socketio.on("requestSongs")
