@@ -54,17 +54,8 @@
         for (let i = 0; i < checkboxes.length; i++) {
             checkboxes[i].addEventListener('change', () => {
                 if (checkboxes[i].checked) {
-                    // if (!(checkboxes[i].id in checkedUsers)){
-                    //     checkedUsers.push(checkboxes[i].id);
-                    // }
                     songRequest(checkboxes[i].id);
                 } else {
-                    // if (checkboxes[i].id in checkedUsers){
-                    //     checkedUsers = checkedUsers.filter((val)=>{
-                    //         return val != checkboxes[i].id;
-                    //     })
-                    //     clearRequest(checkboxes[i].id);
-                    // }
                     clearRequest(checkboxes[i].id);
                 }
             });
@@ -85,11 +76,15 @@
 
     //onclick function to send a request for songs (checkmark)
     const songRequest = (user) => {
-        socketio.emit("requestSongs", user)
+        console.log("sending song request");
+        socketio.emit("requestSongs", user);
+        console.log("song request sent");
     };
 
     const clearRequest = (user) => {
-        socketio.emit("requestClear", user)
+        console.log("sending clear request");
+        socketio.emit("requestClear", user);
+        console.log("clear request sent");
     };
 
     const compareSongs = () => {
