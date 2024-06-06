@@ -127,12 +127,14 @@ def on_connect(auth):
 
 @socketio.on("requestSongs")
 def requestSongs(user):
+    print("songs requested")
     room = session.get("room")
     if room not in rooms:
         return
     
     for data in rooms[room]["content"]:
         if user == data["user"]:
+            print("if you see this and a giant list doesn't follow it, then something about the mit is broken")
             emit("sendSongs", (user, data["tracks"]), to=request.sid)
             print("songs sent: ", data["tracks"])
 
