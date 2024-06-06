@@ -20,6 +20,10 @@ p {
     font-size: 16px;
 }
 
+li {
+    list-style: none;
+}
+
 input, button {
     font-size: 2rem;
     padding: 1rem;
@@ -70,13 +74,31 @@ input, button {
     padding-top: 50px;
     margin-bottom: 30px;
     text-align: center;
-    align-items: center;
     justify-content: center;
 }
 
 .top_songs {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
+    gap: 10px;
+}
+
+.user_sections {
+    display: inline-block;
+}
+
+
+.user_headings {
+    align-items: center;
+    text-align: center;
     justify-content: center;
 }
+
+.list_scroll {
+    overflow: auto;
+    width: 0px;
+    height: 0px;
+    margin: 5px;
+}
+

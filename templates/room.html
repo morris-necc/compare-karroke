@@ -103,13 +103,15 @@
                 firstFound = false;
             } else {
                 let tempSongs = songList[users[user]];
-                let tempCommon = [];
-                for (let i = 3; i < tempSongs.length; i+=4) {
-                    if (commonSongs[i] == tempSongs[i]){
-                        tempCommon.push(tempSongs[i-3], tempSongs[i-2], tempSongs[i-1], tempSongs[i])
+                if (tempSongs.length > 0) {     
+                    let tempCommon = [];
+                    for (let i = 3; i < tempSongs.length; i+=4) {
+                        if (tempSongs.includes(commonSongs[i])){
+                            tempCommon.push(tempSongs[i-3], tempSongs[i-2], tempSongs[i-1], tempSongs[i])
+                        }
                     }
+                    commonSongs = tempCommon;
                 }
-                commonSongs = tempCommon;
             }
         }
         return commonSongs; //returns an array of songs
@@ -117,6 +119,9 @@
 
 
     socketio.on("sendClear", (user) => {
+        document.getElementById(user + "_section").style.border = "none";
+        document.getElementById(user + "_listScroll").style.width = "0px";
+        document.getElementById(user + "_listScroll").style.height = "0px";
         document.getElementById(user + "_header").innerHTML = "";
         document.getElementById(user + "_toptracks").innerHTML = ""; 
         songList[user] = [];
@@ -128,8 +133,12 @@
         //retrieves all songs and put them in
         songList[user] = data;
 
+        document.getElementById(user + "_section").style.border = "5px solid black";
+        document.getElementById(user + "_listScroll").style.width = "400px";
+        document.getElementById(user + "_listScroll").style.height = "400px";
+
         document.getElementById(user + "_header").innerHTML = user;
-        for (var i = 0; i < 200; i+=4) { 
+        for (var i = 0; i < data.length; i+=4) { 
             listSong(user, data[i], data[i+1], data[i+2]);
         }
 
@@ -141,8 +150,12 @@
         document.getElementById("comparison").innerHTML = "";
         let commonSongs = compareSongs();
         let loops = (commonSongs.length > 200)? 200: commonSongs.length;
-        for (var i = 0; i < loops; i+=4) { 
-            listCommon(commonSongs[i], commonSongs[i+1], commonSongs[i+2]);
+        if (commonSongs.length != 0){
+            for (var i = 0; i < loops; i+=4) { 
+                listCommon(commonSongs[i], commonSongs[i+1], commonSongs[i+2]);
+            }
+        } else {
+            document.getElementById("comparison").innerHTML = "<h4>You have nothing in common</h4>"
         }
     }
 
@@ -152,12 +165,20 @@
 <script type="text/javascript">
     listMembers("{{data.user}}");
     document.getElementById("top_songs").innerHTML += `
-                            <div id="{{data.user}}_section"}>
-                                <b id="{{data.user}}_header"> </b>
-                                <ul id= "{{data.user}}_toptracks"}>
-                                </ul>
+                            <div id="{{data.user}}_section" class="user_sections">
+                                <div class="user_headings">
+                                    <b id="{{data.user}}_header"> </b>
+                                </div>
+                                <div id="{{data.user}}_listScroll">
+                                    <ul id= "{{data.user}}_toptracks"}>
+                                    </ul>
+                                </div>
                             </div>
                         `;
+
+    document.getElementById("{{data.user}}_listScroll").style.overflow = "auto";
+    document.getElementById("{{data.user}}_listScroll").style.margin = "5px";
+
 </script>
 {% endfor %}
 
