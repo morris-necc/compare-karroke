@@ -141,9 +141,9 @@ def requestSongs(user):
     for data in rooms[room]["content"]:
         print("user: ", user, "data: ", data["user"])
         if user == data["user"]:
-            print("if you see this and a giant list doesn't follow it, then something about the mit is broken")
+            # print("if you see this and a giant list doesn't follow it, then something about the emit is broken")
             emit("sendSongs", (user, data["tracks"]), to=request.sid)
-            print("songs sent: ", data["tracks"])
+            # print("songs sent: ", data["tracks"])
 
 @socketio.on("requestClear")
 def requestClear(user):
@@ -151,6 +151,7 @@ def requestClear(user):
     room = session.get("room")
     if room not in rooms:
         print("room somehow not in rooms")
+        print("session[room] :", room, "| rooms :", rooms)
         return
     
     for data in rooms[room]["content"]:
