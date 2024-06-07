@@ -1,5 +1,5 @@
-import eventlet
-eventlet.monkey_patch()
+# import eventlet
+# eventlet.monkey_patch()
 
 from flask import Flask, request, url_for, session, redirect, render_template
 from flask_socketio import join_room, leave_room, send, SocketIO, emit
@@ -12,6 +12,8 @@ import os
 # Notes
 # 1. Room doesn't stay in rooms (at some point rooms get cleared, session[room] is still there though)
 # 2. invalid frame header (possible that fixing this might fix above problem)
+# I think that the workers that have reached the timeout time is killed, deleting all the data with it
+# We only have 1 worker
 
 # initialize flask
 app = Flask(__name__)
