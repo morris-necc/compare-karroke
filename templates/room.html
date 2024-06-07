@@ -79,12 +79,12 @@
                 let tempSongs = songList[users[user]]; // tempsongs now has the first user's songs
                 if (tempSongs.length > 0) {     // if tempsongs is not empty
                     let tempCommon = [];  //temp variable to store common songs
-                    for (let i = 3; i < tempSongs.length; i+=4) {
-                        console.log(commonSongs[i]);
+                    for (let i = 3; i < commonSongs.length; i+=4) {
+                        // console.log(commonSongs[i]);
                         if (tempSongs.indexOf(commonSongs[i]) != -1){
-                            console.log("Song: ", tempSongs[i-2], tempSongs[i-1]);
-                            console.log(commonSongs[i], " and ", tempSongs[tempSongs.indexOf(commonSongs[i])]);
-                            tempCommon.push(tempSongs[i-3], tempSongs[i-2], tempSongs[i-1], tempSongs[i]);
+                            // console.log("Song: ", tempSongs[i-2], tempSongs[i-1]);
+                            // console.log(commonSongs[i], " and ", tempSongs[tempSongs.indexOf(commonSongs[i])]);
+                            tempCommon.push(commonSongs[i-3], commonSongs[i-2], commonSongs[i-1], commonSongs[i]);
                         }
                     }
                     commonSongs = tempCommon;
