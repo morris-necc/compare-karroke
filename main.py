@@ -5,12 +5,13 @@ import random
 from string import ascii_uppercase
 from flask_session import Session
 import os
+import eventlet
 
 # Notes
 # 1. Room doesn't stay in rooms (at some point rooms get cleared, session[room] is still there though)
 # 2. invalid frame header (possible that fixing this might fix above problem)
 
-# initialize
+# initialize flask
 app = Flask(__name__)
 os.environ["SPOTIPY_CLIENT_ID"] = "77771486cf5e471fb94e32197e9035e9"
 os.environ["SPOTIPY_CLIENT_SECRET"] = "0009c35f5bd248e1a4234a1f2a765b1c"
@@ -21,8 +22,13 @@ app.config['SECRET_KEY'] = os.urandom(64)
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_FILE_DIR'] = './.flask_session/'
 Session(app)
+
+#socketio
 socketio = SocketIO(app)
 rooms = {}
+
+#idk what this is
+eventlet.monkey_patch()
 
 def generate_unique_code(length):
     while True:
@@ -124,10 +130,10 @@ def on_connect(auth):
     send(data, to=room)
     rooms[room]["members"] += 1
 
-@socketio.on('ping')
-def handle_ping():
-    print("pong: ", rooms)
-    emit('pong', to=request.sid) #keep alive to prevent automatic dropping of idle connection
+# @socketio.on('ping')
+# def handle_ping():
+#     print("pong: ", rooms)
+#     emit('pong', to=request.sid) #keep alive to prevent automatic dropping of idle connection
 
 @socketio.on("requestSongs")
 def requestSongs(user):
