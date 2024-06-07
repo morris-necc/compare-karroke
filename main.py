@@ -20,7 +20,7 @@ app = Flask(__name__)
 os.environ["SPOTIPY_CLIENT_ID"] = "77771486cf5e471fb94e32197e9035e9"
 os.environ["SPOTIPY_CLIENT_SECRET"] = "0009c35f5bd248e1a4234a1f2a765b1c"
 os.environ["SPOTIPY_REDIRECT_URI"] = 'https://compare-karroke.onrender.com/'
-# # # os.environ["SPOTIPY_REDIRECT_URI"] = 'http://localhost:5000/'
+# os.environ["SPOTIPY_REDIRECT_URI"] = 'http://localhost:5000/'
 # os.environ["SPOTIPY_REDIRECT_URI"] = 'https://neccpain.pythonanywhere.com/'
 app.config['SECRET_KEY'] = os.urandom(64)
 app.config['SESSION_TYPE'] = 'filesystem'
@@ -106,6 +106,8 @@ def room():
         for item in sp.current_user_top_tracks(limit=50, offset=i*50)['items']:
             # appends the album cover, track title, artist, and song id
             items += [item['album']['images'][2]['url'], item['name'], item['artists'][0]['name'], item['id']]
+
+    print(sp.current_user_top_tracks(limit=50, offset=i*50)['items'][0])
 
     session["items"] = items
 
