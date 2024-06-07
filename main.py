@@ -1,3 +1,6 @@
+import eventlet
+eventlet.monkey_patch()
+
 from flask import Flask, request, url_for, session, redirect, render_template
 from flask_socketio import join_room, leave_room, send, SocketIO, emit
 import spotipy
@@ -5,7 +8,6 @@ import random
 from string import ascii_uppercase
 from flask_session import Session
 import os
-import eventlet
 
 # Notes
 # 1. Room doesn't stay in rooms (at some point rooms get cleared, session[room] is still there though)
@@ -26,9 +28,6 @@ Session(app)
 #socketio
 socketio = SocketIO(app)
 rooms = {}
-
-#idk what this is
-eventlet.monkey_patch()
 
 def generate_unique_code(length):
     while True:
