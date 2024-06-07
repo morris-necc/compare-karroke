@@ -26,7 +26,7 @@ app.config['SESSION_FILE_DIR'] = './.flask_session/'
 Session(app)
 
 #socketio
-socketio = SocketIO(app)
+socketio = SocketIO(app, async_mode='eventlet')
 rooms = {}
 
 def generate_unique_code(length):
