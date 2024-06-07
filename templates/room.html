@@ -13,7 +13,8 @@
 <script type="text/javascript">
     // var socketio = io();
     var socketio = io('https://compare-karroke.onrender.com', {
-        transports: ['websocket', 'polling'],
+        transports: ['websocket'],
+        // transports: ['websocket', 'polling'], try removing polling
         timeout: 20000
     });
     var songList = {}; //user : songs

@@ -5,11 +5,10 @@ import random
 from string import ascii_uppercase
 from flask_session import Session
 import os
-import threading
 
 # Notes
-# The only problem now is that it looks ugly
-# Oh, and for some reason the emit thing doesn't work
+# 1. Room doesn't stay in rooms (at some point rooms get cleared, session[room] is still there though)
+# 2. invalid frame header (possible that fixing this might fix above problem)
 
 # initialize
 app = Flask(__name__)
@@ -127,6 +126,7 @@ def on_connect(auth):
 
 @socketio.on('ping')
 def handle_ping():
+    print("pong: ", rooms)
     emit('pong') #keep alive to prevent automatic dropping of idle connection
 
 @socketio.on("requestSongs")
