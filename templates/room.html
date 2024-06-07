@@ -67,20 +67,24 @@
 
     const compareSongs = () => {
         // disgusting brute force comparison
-        users = Object.keys(songList);
-        let firstFound = true;
-        let commonSongs = [];
-        for (user in users) {
+        users = Object.keys(songList); //[Zepo, necc_pain, sam]
+        let firstFound = true; 
+        let commonSongs = []; //contains all the common songs
+        for (user in users) { 
             if (songList[users[user]].length && firstFound) {
-                commonSongs = songList[users[user]];
-                firstFound = false;
+                // this part doesn't run if songlist is empty
+                commonSongs = songList[users[user]]; //first person, zepo
+                firstFound = false; //someone is found
             } else {
-                let tempSongs = songList[users[user]];
-                if (tempSongs.length > 0) {     
-                    let tempCommon = [];
+                let tempSongs = songList[users[user]]; // tempsongs now has the first user's songs
+                if (tempSongs.length > 0) {     // if tempsongs is not empty
+                    let tempCommon = [];  //temp variable to store common songs
                     for (let i = 3; i < tempSongs.length; i+=4) {
-                        if (tempSongs.includes(commonSongs[i])){
-                            tempCommon.push(tempSongs[i-3], tempSongs[i-2], tempSongs[i-1], tempSongs[i])
+                        console.log(commonSongs[i]);
+                        if (tempSongs.indexOf(commonSongs[i]) != -1){
+                            console.log("Song: ", tempSongs[i-2], tempSongs[i-1]);
+                            console.log(commonSongs[i], " and ", tempSongs[tempSongs.indexOf(commonSongs[i])]);
+                            tempCommon.push(tempSongs[i-3], tempSongs[i-2], tempSongs[i-1], tempSongs[i]);
                         }
                     }
                     commonSongs = tempCommon;
@@ -103,7 +107,7 @@
     });
 
     socketio.on("sendSongs", (user, data) => {
-        //retrieves all songs and put them in
+        //retrieves all songs and put them under the user
         songList[user] = data;
 
         document.getElementById(user + "_section").style.border = "5px solid black";
