@@ -127,7 +127,7 @@ def on_connect(auth):
 @socketio.on('ping')
 def handle_ping():
     print("pong: ", rooms)
-    emit('pong') #keep alive to prevent automatic dropping of idle connection
+    emit('pong', to=request.sid) #keep alive to prevent automatic dropping of idle connection
 
 @socketio.on("requestSongs")
 def requestSongs(user):
