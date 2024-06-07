@@ -3,3 +3,4 @@ Flask_SocketIO==5.3.6
 spotipy==2.23.0
 gunicorn==22.0.0
 Flask-Session==0.8.0
+eventlet==0.36.1
