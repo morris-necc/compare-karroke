@@ -1,5 +1,5 @@
-# import eventlet
-# eventlet.monkey_patch()
+import eventlet
+eventlet.monkey_patch()
 
 from flask import Flask, request, url_for, session, redirect, render_template
 from flask_socketio import join_room, leave_room, send, SocketIO, emit
@@ -28,8 +28,8 @@ app.config['SESSION_FILE_DIR'] = './.flask_session/'
 Session(app)
 
 #socketio
-socketio = SocketIO(app)
-# socketio = SocketIO(app, async_mode='eventlet')
+# socketio = SocketIO(app)
+socketio = SocketIO(app, async_mode='eventlet')
 rooms = {}
 
 def generate_unique_code(length):
